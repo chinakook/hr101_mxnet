@@ -30,8 +30,12 @@ data = mx.symbol.Variable(name='data')
 conv1 = mx.symbol.Convolution(name='conv1', data=data , num_filter=64, pad=(3, 3), kernel=(7,7), stride=(2,2), no_bias=True)
 bn_conv1 = mx.symbol.BatchNorm(name='bn_conv1', data=conv1 , use_global_stats=True, fix_gamma=False, eps=0.00001, cudnn_off=True)
 conv1_relu = mx.symbol.Activation(name='conv1_relu', data=bn_conv1 , act_type='relu')
-# pooling paddings may not be same to matconvnet's pad [0, 1, 0, 1], but it actually does not affect the final result as I test.
-pool1 = mx.symbol.Pooling(name='pool1', data=conv1_relu , pooling_convention='full', pad=(0,0), kernel=(3,3), stride=(2,2), pool_type='max')
+# pad right and bottom as the origin matconvnet implementation
+conv1_relu_padded = mx.symbol.pad(name='conv1_relu_padded', data=conv1_relu, mode='constant', constant_value=0, pad_width=(0,0,0,0,0,1,0,1))
+# pool in matconvnet use 'valid' mode but not 'full'
+pool1 = mx.symbol.Pooling(name='pool1', data=conv1_relu_padded , pooling_convention='valid', pad=(0,0), kernel=(3,3), stride=(2,2), pool_type='max')
+# another choice to deal with the matconvnet's right and bottom padding
+# pool1 = mx.symbol.Pooling(name='pool1', data=conv1_relu , pooling_convention='full', pad=(0,0), kernel=(3,3), stride=(2,2), pool_type='max')
 res2a_branch1 = mx.symbol.Convolution(name='res2a_branch1', data=pool1 , num_filter=256, pad=(0, 0), kernel=(1,1), stride=(1,1), no_bias=True)
 bn2a_branch1 = mx.symbol.BatchNorm(name='bn2a_branch1', data=res2a_branch1 , use_global_stats=True, fix_gamma=False, eps=0.00001, cudnn_off=True)
 res2a_branch2a = mx.symbol.Convolution(name='res2a_branch2a', data=pool1 , num_filter=64, pad=(0, 0), kernel=(1,1), stride=(1,1), no_bias=True)
