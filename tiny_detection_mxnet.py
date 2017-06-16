@@ -170,7 +170,7 @@ for s in scales:
     fusex_res = mod.get_outputs()[0]
 
     score_cls = mx.nd.slice_axis(fusex_res, axis=1, begin=0, end=25, name='score_cls')
-    score_reg = mx.nd.slice_axis(fusex_res, axis=1, begin=25, end=125, name='score_reg')
+    score_reg = mx.nd.slice_axis(fusex_res, axis=1, begin=25, end=None, name='score_reg')
     prob_cls = mx.nd.sigmoid(score_cls)
     
     prob_cls_np = prob_cls.asnumpy()
