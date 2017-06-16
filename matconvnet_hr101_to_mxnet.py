@@ -346,7 +346,7 @@ score_res4 = mx.symbol.Convolution(name='score_res4', data=res4b22_relu , num_fi
 score4 = mx.symbol.Deconvolution(name='score4', data=score_res4 , num_filter=125, pad=(0, 0), kernel=(4,4), stride=(2,2), no_bias=True)
 score_res3 = mx.symbol.Convolution(name='score_res3', data=res3b3_relu , num_filter=125, pad=(0, 0), kernel=(1,1), stride=(1,1), no_bias=False)
 # The slice layer crop the deconvolution result with param [1,2,1,2] , same to the matconvnet 
-score4_sliced = mx.symbol.slice(name='score4_sliced', data=score4, begin=(0,0,1,1), end=(1,125,-2,-2))
+score4_sliced = mx.symbol.slice(name='score4_sliced', data=score4, begin=(0,0,1,1), end=(None,None,-2,-2))
 crop = mx.symbol.Crop(name='crop', *[score_res3, score4_sliced] , center_crop=True)
 fusex = mx.symbol.broadcast_add(name='fusex', *[score4_sliced,crop] )
 
