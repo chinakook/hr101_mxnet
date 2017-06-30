@@ -61,7 +61,7 @@ def nms(dets, prob_thresh):
         inds = np.where(ovr <= prob_thresh)[0]  
 
         order = order[inds + 1]  
-        return keep
+    return keep
 
 
 # In[5]:
