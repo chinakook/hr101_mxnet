@@ -15,4 +15,4 @@ arXiv preprint arXiv:1612.04402, 2016.
     * simply run tiny_detection_mxnet.py
 
 ## Differences
-  This implementation reproduces just the same result as the origin implementation except that I make use of a simple post-processing nms.
+  You should install opencv-python 2.4 to get the nearly completely identical result to the origin implemetation.
