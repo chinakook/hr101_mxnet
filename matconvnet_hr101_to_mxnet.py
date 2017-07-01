@@ -15,7 +15,7 @@ symbol_string = "import mxnet as mx\ndata= mx.symbol.Variable(name='data')\n"
 
 # In[64]:
 
-matpath='~/dev/tiny/trained_models/hr_res101.mat'
+matpath='./hr_res101.mat'
 
 
 # In[65]:
