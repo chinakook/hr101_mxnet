@@ -128,9 +128,9 @@ for s in scales:
 
     tids = []
     if s <= 1. :
-        tids = range(4, 12)
+        tids = list(range(4, 12))
     else :
-        tids = range(4,12)+range(18,25)
+        tids = list(range(4, 12)) + list(range(18, 25))
     ignoredTids = list(set(range(0,clusters.shape[0]))-set(tids))
     img_h = img.shape[1]
     img_w = img.shape[2]
@@ -181,7 +181,7 @@ for s in scales:
 
 # In[14]:
 
-print "time", time.time()-start, "secs."
+print ("time", time.time()-start, "secs.")
 refind_idx = nms(bboxes, nms_thresh)
 refind_bboxes = bboxes[refind_idx]
 refind_bboxes = refind_bboxes.astype(np.int32)
