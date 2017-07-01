@@ -28,6 +28,7 @@ net = f['net']
 
 data = mx.symbol.Variable(name='data')
 conv1 = mx.symbol.Convolution(name='conv1', data=data , num_filter=64, pad=(3, 3), kernel=(7,7), stride=(2,2), no_bias=True)
+# Turn cudnn off in all batchnorm layer as the cudnn does not support eps <= 0.00001
 bn_conv1 = mx.symbol.BatchNorm(name='bn_conv1', data=conv1 , use_global_stats=True, fix_gamma=False, eps=0.00001, cudnn_off=True)
 conv1_relu = mx.symbol.Activation(name='conv1_relu', data=bn_conv1 , act_type='relu')
 # pad right and bottom as the origin matconvnet implementation
@@ -345,7 +346,8 @@ res4b22_relu = mx.symbol.Activation(name='res4b22_relu', data=res4b22 , act_type
 score_res4 = mx.symbol.Convolution(name='score_res4', data=res4b22_relu , num_filter=125, pad=(0, 0), kernel=(1,1), stride=(1,1), no_bias=False)
 score4 = mx.symbol.Deconvolution(name='score4', data=score_res4 , num_filter=125, pad=(0, 0), kernel=(4,4), stride=(2,2), no_bias=True)
 score_res3 = mx.symbol.Convolution(name='score_res3', data=res3b3_relu , num_filter=125, pad=(0, 0), kernel=(1,1), stride=(1,1), no_bias=False)
-# The slice layer crop the deconvolution result with param [1,2,1,2] , same to the matconvnet 
+# As the convolution block make input padding and output downsampling, the deconvolution block should make input upsampling and OUTPUT CROPPING.
+# It's tricky to crop the deconvolution result with 'slice' op, same to the crop param [1,2,1,2] of ConvTranspose in matconvnet.
 score4_sliced = mx.symbol.slice(name='score4_sliced', data=score4, begin=(0,0,1,1), end=(None,None,-2,-2))
 crop = mx.symbol.Crop(name='crop', *[score_res3, score4_sliced] , center_crop=True)
 fusex = mx.symbol.broadcast_add(name='fusex', *[score4_sliced,crop] )
@@ -465,14 +467,3 @@ model = mx.mod.Module(symbol=fusex, data_names=['data'], label_names=None)
 model.bind(data_shapes=[('data', (1, 3, 224, 224))])
 model.init_params(arg_params=arg_params, aux_params=aux_params)
 model.save_checkpoint('hr101', 0)
-
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-
-
