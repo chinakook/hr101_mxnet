@@ -66,7 +66,7 @@ def nms(dets, prob_thresh):
 
 # In[5]:
 
-clusters, averageImage = loadmeta('~/dev/tiny/trained_models/hr_res101.mat')
+clusters, averageImage = loadmeta('./hr_res101.mat')
 
 
 # In[6]:
@@ -78,7 +78,7 @@ normal_idx = np.where(clusters[:,4] == 1)
 
 # In[7]:
 
-raw_img = cv2.imread('~/dev/tiny/data/demo/selfie.jpg')
+raw_img = cv2.imread('./selfie.jpg')
 raw_h = raw_img.shape[0]
 raw_w = raw_img.shape[1]
 raw_img = cv2.cvtColor(raw_img, cv2.COLOR_BGR2RGB)
