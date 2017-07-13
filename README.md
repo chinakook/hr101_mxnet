@@ -1,5 +1,5 @@
 # HR101-MXNet
-**This is an inference-only implementation for MXNet of [tiny face](https://github.com/peiyunh/tiny)**
+**This is an inference-only implementation for MXNet of [tiny face](https://github.com/peiyunh/tiny).**
 See the following references for more information:
 ```
 "Finding Tiny Faces."
