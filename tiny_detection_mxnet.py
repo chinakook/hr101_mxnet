@@ -7,7 +7,8 @@ import mxnet as mx
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
-import scipy.io as sio
+import pickle
+
 import pylab as pl
 from collections import namedtuple
 import time
@@ -19,18 +20,6 @@ Batch = namedtuple('Batch', ['data'])
 MAX_INPUT_DIM=5000.0
 prob_thresh = 0.5
 nms_thresh = 0.1
-
-
-# In[3]:
-
-def loadmeta(matpath):
-    f = sio.loadmat(matpath)
-    net = f['net']
-    clusters = np.copy(net['meta'][0][0][0][0][6])
-    averageImage = np.copy(net['meta'][0][0][0][0][2][0][0][2])
-    averageImage = averageImage[:, np.newaxis]
-    return clusters, averageImage
-
 
 # In[4]:
 
@@ -66,8 +55,15 @@ def nms(dets, prob_thresh):
 
 # In[5]:
 
-clusters, averageImage = loadmeta('./hr_res101.mat')
+sym, arg_params, aux_params = mx.model.load_checkpoint('hr101',0)
+all_layers = sym.get_internals()
 
+meta_file = open('meta.pkl', 'rb')
+
+clusters = pickle.load(meta_file)
+averageImage = pickle.load(meta_file)
+
+meta_file.close()
 
 # In[6]:
 
@@ -100,12 +96,6 @@ scales = np.power(2.0, scales_pow)
 
 
 # In[10]:
-
-sym, arg_params, aux_params = mx.model.load_checkpoint('hr101',0)
-all_layers = sym.get_internals()
-
-
-# In[11]:
 
 context=mx.gpu()
 
@@ -193,5 +183,5 @@ plt.show()
 
 # In[15]:
 
-bboxes.shape
+print(refind_bboxes.shape)
 
