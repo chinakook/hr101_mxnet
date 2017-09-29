@@ -347,14 +347,11 @@ bn4b22_branch2c = mx.symbol.BatchNorm(name='bn4b22_branch2c', data=res4b22_branc
 res4b22 = mx.symbol.broadcast_add(name='res4b22', *[res4b21_relu,bn4b22_branch2c] )
 res4b22_relu = mx.symbol.Activation(name='res4b22_relu', data=res4b22 , act_type='relu')
 score_res4 = mx.symbol.Convolution(name='score_res4', data=res4b22_relu , num_filter=125, pad=(0, 0), kernel=(1,1), stride=(1,1), no_bias=False)
-score4 = mx.symbol.Deconvolution(name='score4', data=score_res4 , num_filter=125, pad=(0, 0), kernel=(4,4), stride=(2,2), no_bias=True)
+score4 = mx.symbol.Deconvolution(name='score4', data=score_res4 , num_filter=125, pad=(1, 1), adj=(1, 1), kernel=(4,4), stride=(2,2), no_bias=True)
+score4 = mx.symbol.slice(name='score4_sliced', data=score4, begin=(0,0,0,0), end=(None,None,-2,-2))
 score_res3 = mx.symbol.Convolution(name='score_res3', data=res3b3_relu , num_filter=125, pad=(0, 0), kernel=(1,1), stride=(1,1), no_bias=False)
-# As the convolution block make input padding and output downsampling, the deconvolution block should make input upsampling and OUTPUT CROPPING.
-# It's tricky to crop the deconvolution result with 'slice' op, same to the crop param [1,2,1,2] of ConvTranspose in matconvnet.
-score4_sliced = mx.symbol.slice(name='score4_sliced', data=score4, begin=(0,0,1,1), end=(None,None,-2,-2))
-crop = mx.symbol.Crop(name='crop', *[score_res3, score4_sliced] , center_crop=True)
-fusex = mx.symbol.broadcast_add(name='fusex', *[score4_sliced,crop] )
-
+crop = mx.symbol.Crop(name='crop', *[score_res3, score4] , center_crop=True)
+fusex = mx.symbol.broadcast_add(name='fusex', *[score4, crop] )
 
 # In[67]:
 
