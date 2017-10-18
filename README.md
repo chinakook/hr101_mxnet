@@ -16,3 +16,6 @@ arXiv preprint arXiv:1612.04402, 2016.
 
 ## Differences
   You should install opencv-python 2.4 to get the nearly completely identical result to the origin implemetation.
+
+## Other implementations
+[cydonia999's Tensorflow implemetation](https://github.com/cydonia999/Tiny_Faces_in_Tensorflow)
