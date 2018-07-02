@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import cv2
 import pickle
 
-import pylab as pl
 from collections import namedtuple
 import time
 Batch = namedtuple('Batch', ['data'])
@@ -89,8 +88,8 @@ max_scale = min(1.0, -np.log2(max(raw_h, raw_w)/MAX_INPUT_DIM))
 
 # In[9]:
 
-scales_down = pl.frange(min_scale, 0, 1.)
-scales_up = pl.frange(0.5, max_scale,0.5)
+scales_down = np.arange(min_scale, 0+0.0001, 1.)
+scales_up = np.arange(0.5, max_scale+0.0001, 0.5)
 scales_pow = np.hstack((scales_down, scales_up))
 scales = np.power(2.0, scales_pow)
 
@@ -111,7 +110,7 @@ mod.set_params(arg_params=arg_params, aux_params=aux_params, force_init=False)
 
 start = time.time()
 bboxes = np.empty(shape=(0,5))
-for s in scales:
+for s in scales[::-1]:
     img = cv2.resize(raw_img_f, (0,0), fx = s, fy = s)
     img = np.transpose(img,(2,0,1))
     img = img - averageImage
