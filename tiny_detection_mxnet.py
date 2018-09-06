@@ -4,14 +4,14 @@ import sys
 import cv2 as cv
 
 if __name__ == '__main__':
-    detector = TinyFacesDetector(model_root='./', prob_thresh=0.5, gpu_idx=1)
+    detector = TinyFacesDetector(model_root='./', prob_thresh=0.5, gpu_idx=0)
     if len(sys.argv) == 2:
         path = sys.argv[1]
     else:
         path = './selfie.jpg'
     img = cv.imread(path)
     boxes = detector.detect(img)
-    print(boxes.shape)
+    print('Faces detected: {}'.format(boxes.shape[0]))
 
     for r in boxes:
         cv.rectangle(img, (r[0],r[1]), (r[2],r[3]), (255,255,0),3)

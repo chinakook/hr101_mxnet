@@ -1,3 +1,4 @@
+import logging
 import mxnet as mx
 import numpy as np
 import cv2 as cv
@@ -9,8 +10,10 @@ import time
 Batch = namedtuple('Batch', ['data'])
 
 class TinyFacesDetector:
-    def __init__(self, model_root='./', prob_thresh=0.5, gpu_idx=0, cudnn_autotune=False):
-        print('Loading detector...')
+    def __init__(self, model_root='./', prob_thresh=0.5, gpu_idx=0, cudnn_autotune=False, verbose=False):
+        if verbose:
+            logging.basicConfig(level = logging.INFO, format = '[INFO]:  %(message)s', handlers = [logging.StreamHandler()])
+        logging.info('Loading detector...')
         os.environ['MXNET_CUDNN_AUTOTUNE_DEFAULT']=str(int(cudnn_autotune))
         self.MAX_INPUT_DIM=5000.0
         self.prob_thresh = prob_thresh
@@ -31,7 +34,7 @@ class TinyFacesDetector:
         self.mod = mx.mod.Module(symbol=all_layers['fusex_output'], context=context, data_names=['data'], label_names=None)
         self.mod.bind(for_training=False, data_shapes=[('data', (1, 3, 224, 224))], label_shapes=None, force_rebind=False)
         self.mod.set_params(arg_params=arg_params, aux_params=aux_params, force_init=False)
-        print('Done')
+        logging.info('Done loading.')
 
     @staticmethod
     def nms(dets, prob_thresh):
@@ -135,7 +138,7 @@ class TinyFacesDetector:
             tmp_bboxes = tmp_bboxes.transpose()
             bboxes = np.vstack((bboxes, tmp_bboxes))
 
-        print ("time", time.time()-start, "secs.")
+        logging.info("Detection time: " + str(time.time()-start) + "secs.")
         refind_idx = self.nms(bboxes, self.nms_thresh)
         refind_bboxes = bboxes[refind_idx]
         refind_bboxes = refind_bboxes.astype(np.int32)
