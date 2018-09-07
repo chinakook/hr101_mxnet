@@ -13,6 +13,16 @@ arXiv preprint arXiv:1612.04402, 2016.
   * Transform the origin Matconvnet model to MXNet model using matconvnet_hr101_to_mxnet.py.
   * To run:
     * simply run tiny_detection_mxnet.py
+    * use from your code
+
+```python
+from tiny_fd import TinyFacesDetector
+import cv2 as cv
+
+detector = TinyFacesDetector(model_root='./', prob_thresh=0.5, gpu_idx=0)
+img = cv.imread('./selfie.jpg')
+boxes = detector.detect(img)
+```
 
 ## Differences
   You should install opencv-python 2.4 to get the nearly completely identical result to the origin implemetation.
